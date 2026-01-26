@@ -1,0 +1,13 @@
+name: Tp1 - markov
+
+on:
+  push:
+    branches:
+      - feature/**
+jobs:
+
+  # 1. Lint
+  lint:
+    uses: ./.github/workflows/lint_python.yaml
+    with:
+      linting_path: task-manager/backend
