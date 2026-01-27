@@ -10,7 +10,9 @@ repos:
     hooks:
     -   id: black
 
-- repo: https://github.com/standard/standard
-  rev: v17.1.2
-  hooks:
-  -    id: standard
+-   repo: local
+    hooks:
+    -     id: eslint
+          name: eslint
+          entry: bash -c "cd task-manager/frontend && npx eslint --fix 'app.js'"
+          language: node
