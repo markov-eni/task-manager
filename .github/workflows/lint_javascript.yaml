@@ -36,4 +36,4 @@ jobs:
         run: npm ci
 
       # Run dependencies
-      - run: npx eslint --fix 'app.js'
+      - run: npm run lint --fix
