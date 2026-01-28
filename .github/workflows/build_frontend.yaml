@@ -1,0 +1,36 @@
+name: Build frontend
+description: lint , test , static code analysi and build and push image
+
+on:
+  workflow_call:
+
+jobs:
+
+  npm_install:
+    uses: ./.github/workflows/install_npm.yaml
+    with:
+      application_path: task-manager/frontend
+
+  lint_js:
+    needs: npm_install
+    uses: ./.github/workflows/lint_javascript.yaml
+    with:
+      cache_key: ${{ needs.install.outputs.cache_key }}
+      cache_path: ${{ needs.install.outputs.cache_path }}
+      application_path: task-manager/frontend
+
+  scan_frontend_docker_image:
+    needs:
+      - lint_js
+    uses: ./.github/workflows/scan_vulnerabilities.yaml
+    with:
+      application_path: task-manager/frontend
+
+  build_frontend:
+    needs:
+      - scan_frontend_docker_image
+    uses: ./.github/workflows/build_image.yaml
+    secrets: inherit
+    with:
+      application_path: task-manager/frontend
+      application_name: frontend
