@@ -1,0 +1,28 @@
+name: Scan vulnerbility
+description: scan vulneraiblities with trivy
+
+on:
+  workflow_call:
+
+jobs:
+
+    scan_vulnerability:
+        runs-on: ubuntu-latest
+        steps:
+
+        - name: Checkout code
+          uses: actions/checkout@v6
+
+        - name: Manual Trivy Setup
+          uses: aquasecurity/setup-trivy@v0.2.0
+          with:
+            cache: true
+            version: v0.68.1
+
+        - name: run trivy
+          uses: aquasecurity/trivy-action@0.33.1
+          with:
+            scan-type: 'fs'
+            scan-ref: './task-manager'
+            format: 'table'
+            output: 'trivy-results.cdx'

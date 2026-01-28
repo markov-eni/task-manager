@@ -38,10 +38,17 @@ jobs:
 
   # -------- 3. Scan vulnerabilities (coming soon) -----------
 
+  scan_vulnerabilities:
+    needs:
+      - lint_python
+      - lint_js
+    uses: ./.github/workflows/scan_vulnerabilities.yaml
+
+
   # -------- 4. Build & Push image -----------
 
   build_backend:
-    needs: lint_python
+    needs: scan_vulnerabilities
     uses: ./.github/workflows/build_image.yaml
     secrets: inherit
     with:
