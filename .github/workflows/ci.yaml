@@ -14,7 +14,7 @@ jobs:
   install:
     uses: ./.github/workflows/install_npm.yaml
     with:
-      application_path: task-manager/frontend/
+      application_path: task-manager/frontend
 
   # -------- 1. Lint -----------
   # 1. Lint
