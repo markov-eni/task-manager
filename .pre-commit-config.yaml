@@ -14,5 +14,5 @@ repos:
     hooks:
     -     id: eslint
           name: eslint
-          entry: bash -c "cd task-manager/frontend && npx eslint --fix 'app.js'"
+          entry: bash -c "cd task-manager/frontend && npx eslint --fix 'src/app.js'"
           language: node
