@@ -6,79 +6,28 @@ on:
       - main
 jobs:
 
-  # NOTE : backend & frontend build should be split to different files
+  filter_path:
+    uses: ./.github/workflows/filter_path.yaml
 
-  # -------- 0. Install & cache  deps ----------
-
-  # npm
-  install:
-    uses: ./.github/workflows/install_npm.yaml
-    with:
-      application_path: task-manager/frontend
-
-  # -------- 1. Lint -----------
-  # 1. Lint
-
-  # 1.1 Lint python
-  lint_python:
-    uses: ./.github/workflows/lint_python.yaml
-    with:
-      linting_path: task-manager/backend
-
-  # 1.2 Lint javascript
-  lint_js:
-    needs: install
-    uses: ./.github/workflows/lint_javascript.yaml
-    with:
-      cache_key: ${{ needs.install.outputs.cache_key }}
-      cache_path: ${{ needs.install.outputs.cache_path }}
-      application_path: task-manager/frontend
-
-  # -------- 2. Tests (coming soon) -----------
-
-  # -------- 3. Scan vulnerabilities -----------
-
-  # Backend
-  scan_backend_docker_image:
+  scan_dependencies:
+    if: needs.filter_path.outputs.backend == 'true' || needs.filter_path.outputs.frontend == 'true'
     needs:
-      - lint_python
-    uses: ./.github/workflows/scan_vulnerabilities.yaml
-    with:
-      application_path: task-manager/backend
-
-  # Frontend
-  scan_frontend_docker_image:
-    needs:
-      - lint_js
-    uses: ./.github/workflows/scan_vulnerabilities.yaml
-    with:
-      application_path: task-manager/frontend
-
-  # Dependencies
-  scan_vulnerabilities:
+      - filter_path
     uses: ./.github/workflows/scan_dependencies.yaml
 
 
-  # -------- 4. Build & Push image -----------
-
-  # Backend
   build_backend:
+    if: needs.filter_path.outputs.backend == 'true'
     needs:
-      - scan_vulnerabilities
-      - scan_backend_docker_image
-    uses: ./.github/workflows/build_image.yaml
+      - filter_path
+      - scan_dependencies
     secrets: inherit
-    with:
-      application_path: task-manager/backend
-      application_name: backend
+    uses: ./.github/workflows/build_backend.yaml
 
-  # Frontend
   build_frontend:
+    if: needs.filter_path.outputs.frontend == 'true'
     needs:
-      - scan_vulnerabilities
-      - scan_frontend_docker_image
-    uses: ./.github/workflows/build_image.yaml
+      - filter_path
+      - scan_dependencies
     secrets: inherit
-    with:
-      application_path: task-manager/frontend
-      application_name: frontend
+    uses: ./.github/workflows/build_frontend.yaml
