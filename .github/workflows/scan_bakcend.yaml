@@ -35,3 +35,25 @@ jobs:
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: task-manager/backend/Dockerfile
+
+    build :
+      runs-on: ubuntu-latest
+      needs:
+        - hadolint
+        - checkov
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v6
+
+
+        # Source - https://stackoverflow.com/a
+        # Posted by Lars Grammel
+        # Retrieved 2026-01-28, License - CC BY-SA 4.0
+        - name: Add SHORT_SHA env property with commit short sha
+          run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
+
+        - name: Build docker image
+          run: docker build -t markoveni/task-manager:backend-$SHORT_SHA task-manager/backend
+
+        - name: Push docker image
+          run: docker push markoveni/task-manager:backend-$SHORT_SHA

@@ -1,16 +1,13 @@
 FROM python:3.13
 LABEL version=0.1.0
 
-# Avoid root user by creating a user
-RUN useradd appuser
-
 WORKDIR /app
 COPY . /app/
 
-RUN pip install --no-cache-dir .
-
-# Change ownership of full dir
-RUN chown -R appuser:appuser /app
+# Avoid root user by creating a user
+RUN useradd appuser \
+  && chown -R appuser:appuser /app \
+  && pip install --no-cache-dir .
 
 USER appuser
 
