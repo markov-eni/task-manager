@@ -38,25 +38,45 @@ jobs:
 
   # -------- 3. Scan vulnerabilities -----------
 
-  scan_vulnerabilities:
+  # Backend
+  scan_backend_docker_image:
     needs:
       - lint_python
+    uses: ./.github/workflows/scan_vulnerabilities.yaml
+    with:
+      application_path: task-manager/backend
+
+  # Frontend
+  scan_frontend_docker_image:
+    needs:
       - lint_js
     uses: ./.github/workflows/scan_vulnerabilities.yaml
+    with:
+      application_path: task-manager/frontend
+
+  # Dependencies
+  scan_vulnerabilities:
+    uses: ./.github/workflows/scan_dependencies.yaml
 
 
   # -------- 4. Build & Push image -----------
 
+  # Backend
   build_backend:
-    needs: scan_vulnerabilities
+    needs:
+      - scan_vulnerabilities
+      - scan_backend_docker_image
     uses: ./.github/workflows/build_image.yaml
     secrets: inherit
     with:
       application_path: task-manager/backend
       application_name: backend
 
+  # Frontend
   build_frontend:
-    needs: scan_vulnerabilities
+    needs:
+      - scan_vulnerabilities
+      - scan_frontend_docker_image
     uses: ./.github/workflows/build_image.yaml
     secrets: inherit
     with:

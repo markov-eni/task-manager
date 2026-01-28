@@ -1,5 +1,4 @@
-name: Scan Image vulnerbility
-description: scan vulneraiblities
+name: Build and deploy
 
 on:
   workflow_call:
@@ -10,40 +9,9 @@ on:
         type: string
 
 jobs:
-    checkov:  # Analyse dockerfile with good practice
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version-file: "ci/.python-version"
-
-      - name: Test with Checkov
-        id: checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: ${{ inputs.application_path }}
-          framework: dockerfile
-
-    hadolint:
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Lint with hadlint
-        uses: hadolint/hadolint-action@v3.3.0
-        with:
-          dockerfile: ${{ inputs.application_path }}/Dockerfile
-          failure-threshold: warning
     build :
       runs-on: ubuntu-latest
-      needs:
-        - hadolint
-        - checkov
       steps:
         - name: Checkout code
           uses: actions/checkout@v6
