@@ -1,0 +1,23 @@
+name : Check modified path
+description: output if the push modified the math
+
+on:
+  workflow_call:
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: filter
+        uses: dorny/paths-filter@v3.0.2
+        with:
+          filters: |
+            backend:
+              - 'task-manager/backend/**'
+            frontend:
+              - 'task-manager/frontend/**'
