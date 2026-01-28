@@ -1,0 +1,28 @@
+name: Build backend
+description: lint , test , static code analysi and build and push image
+
+on:
+  workflow_call:
+
+jobs:
+
+  lint_python:
+    uses: ./.github/workflows/lint_python.yaml
+    with:
+      linting_path: task-manager/backend
+
+  scan_backend_docker_image:
+    needs:
+      - lint_python
+    uses: ./.github/workflows/scan_vulnerabilities.yaml
+    with:
+      application_path: task-manager/backend
+
+  build_backend:
+    needs:
+      - scan_backend_docker_image
+    uses: ./.github/workflows/build_image.yaml
+    secrets: inherit
+    with:
+      application_path: task-manager/backend
+      application_name: backend
