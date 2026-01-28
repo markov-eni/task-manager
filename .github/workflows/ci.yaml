@@ -9,12 +9,14 @@ jobs:
   # build image & push to registry
   build_backend:
     uses: ./.github/workflows/build_image.yaml
+    secrets: inherit
     with:
       application_path: task-manager/backend
       application_name: backend
 
   build_frontend:
     uses: ./.github/workflows/build_image.yaml
+    secrets: inherit
     with:
       application_path: task-manager/frontend
       application_name: frontend
