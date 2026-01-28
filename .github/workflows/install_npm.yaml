@@ -25,7 +25,7 @@ jobs:
 
     steps:
       # Clone repo
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Setup Node using specific version
       - uses: actions/setup-node@v4
