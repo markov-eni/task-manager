@@ -1,0 +1,9 @@
+name: Scan depend
+
+on:
+   schedule:
+     - cron: "15 4 * * 4"
+
+jobs:
+  scan_dependencies:
+    uses: ./.github/workflows/scan_dependencies.yaml
