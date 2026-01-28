@@ -1,0 +1,39 @@
+name: npm_lint
+
+on:
+  workflow_call:
+    inputs:
+      application_path:
+        type: string
+      cache_key:
+        type: string
+      cache_path:
+        type: string
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.application_path }}
+    steps:
+      # Clone the repo
+      - uses: actions/checkout@v6
+
+      # Setup Node using specific version
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+
+      # Load cache dependencies if any
+      - uses: actions/cache@v5
+        if: ${{ inputs.cache_key != ''  && inputs.cache_path != '' }}
+        with:
+          path: ${{ inputs.cache_path }}
+          key: ${{ inputs.cache_key }}
+
+      # Install deps otherwise
+      - if: ${{ inputs.cache_key == ''  && inputs.cache_path == '' }}
+        run: npm ci
+
+      # Run dependencies
+      - run: npm run lint --fix

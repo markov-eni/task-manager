@@ -6,8 +6,42 @@ on:
       - main
 jobs:
 
-  # build image & push to registry
+  # NOTE : backend & frontend build should be split to different files
+
+  # -------- 0. Install & cache  deps ----------
+
+  # npm
+  install:
+    uses: ./.github/workflows/install_npm.yaml
+    with:
+      application_path: task-manager/frontend/
+
+  # -------- 1. Lint -----------
+  # 1. Lint
+
+  # 1.1 Lint python
+  lint_python:
+    uses: ./.github/workflows/lint_python.yaml
+    with:
+      linting_path: task-manager/backend
+
+  # 1.2 Lint javascript
+  lint_js:
+    needs: install
+    uses: ./.github/workflows/lint_javascript.yaml
+    with:
+      cache_key: ${{ needs.install.outputs.cache_key }}
+      cache_path: ${{ needs.install.outputs.cache_path }}
+      application_path: task-manager/frontend
+
+  # -------- 2. Tests (coming soon) -----------
+
+  # -------- 3. Scan vulnerabilities (coming soon) -----------
+
+  # -------- 4. Build & Push image -----------
+
   build_backend:
+    needs: lint_python
     uses: ./.github/workflows/build_image.yaml
     secrets: inherit
     with:
@@ -15,6 +49,7 @@ jobs:
       application_name: backend
 
   build_frontend:
+    needs: lint_js
     uses: ./.github/workflows/build_image.yaml
     secrets: inherit
     with:
