@@ -34,6 +34,7 @@ jobs:
 
       # Install deps deterministically
       - run: npm ci
+        working-directory: ${{ inputs.application_path }}
 
       # Cache the deps & Set the cache as output
       - id: cache_key
