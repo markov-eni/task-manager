@@ -10,15 +10,18 @@ from datetime import datetime, timezone
 from .db import Base, engine, get_db
 from .models import Task
 from .schemas import TaskCreate, TaskUpdate, TaskOut
+import os
 
 API_KEY = "devsecops-demo-secret-<a_remplacer>"
 
 app = FastAPI(title="Task Manager API", version="1.0.0")
 
+origins = os.getenv("ALLOWED_ORIGINS").split("|")
+
 # Allow local frontend (file:// or http://localhost) during training
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten later for “good practices”
+    allow_origins=origins,  # tighten later for “good practices”
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

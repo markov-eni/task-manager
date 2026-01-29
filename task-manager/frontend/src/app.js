@@ -1,10 +1,10 @@
-// Change this if your API runs elsewhere (CI, container, remote)
-const API_URL = ('http://backend:8000');
+
+const API_URL = ('http://127.0.0.1:8000');
 document.getElementById('apiUrlLabel').textContent = API_URL;
 
 async function api (path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json'},
     ...options
   });
   if (res.status === 204) return null;

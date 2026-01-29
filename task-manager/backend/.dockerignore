@@ -1,0 +1,6 @@
+.venv
+.python-version
+Dockerfile
+README.md
+taskmanager.db
+uv.lock
