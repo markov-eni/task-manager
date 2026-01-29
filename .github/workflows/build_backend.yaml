@@ -27,4 +27,4 @@ jobs:
       contents: write
     with:
       application_path: task-manager/backend
-      application_name: backend
+      image_registry: ${{ vars.DOCKER_REGISTRY_BACKEND }}

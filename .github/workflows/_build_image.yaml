@@ -5,8 +5,16 @@ on:
     inputs:
       application_path:
         type: string
-      application_name:
+        required: true
+
+      image_registry:
         type: string
+        required: true
+
+      version_tag:
+        type: string
+        required: false
+        description: Will be set as image tag instead of short sha
 
 jobs:
 
@@ -33,7 +41,12 @@ jobs:
           run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
         - id: docker_image # Docker image name
-          run: echo "docker_image=${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA" >> "$GITHUB_OUTPUT"
+          run: |
+            if [[ -n "${{ inputs.version_tag }}" ]]; then
+              echo "docker_image=${{ inputs.image_registry }}:${{ inputs.version_tag }}" >> "$GITHUB_OUTPUT"
+            else
+              echo "docker_image=${{ inputs.image_registry }}:$SHORT_SHA" >> "$GITHUB_OUTPUT"
+            fi
 
         - name: Build docker image
           run: docker build -t ${{ steps.docker_image.outputs.docker_image }} ${{ inputs.application_path }}
