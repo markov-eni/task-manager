@@ -14,6 +14,8 @@ jobs:
       runs-on: ubuntu-latest
       outputs:
         docker_image: ${{ steps.docker_image.outputs.docker_image }}
+      permissions:
+        contents: write
       steps:
         - name: Checkout code
           uses: actions/checkout@v6
@@ -30,11 +32,27 @@ jobs:
         - name: Add SHORT_SHA env property with commit short sha
           run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
+        - id: docker_image # Docker image name
+          run: echo "docker_image=${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA" >> "$GITHUB_OUTPUT"
+
         - name: Build docker image
-          run: docker build -t ${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA ${{ inputs.application_path }}
+          run: docker build -t ${{ steps.docker_image.outputs.docker_image }} ${{ inputs.application_path }}
 
         - name: Push docker image
-          run: docker push ${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA
+          run: docker push ${{ steps.docker_image.outputs.docker_image }}
 
-        - id: docker_image
-          run: echo "docker_image=${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA" >> "$GITHUB_OUTPUT"
+        - name: idk
+          uses: aquasecurity/trivy-action@0.33.1
+          with:
+            scan-type: 'image'
+            image-ref: '${{ steps.docker_image.outputs.docker_image }}'
+            format: 'github'
+            output: 'dependency-results.sbom.json'
+            github-pat: ${{ secrets.GITHUB_TOKEN }}
+            severity: "MEDIUM,HIGH,CRITICAL"
+
+        - name: Upload trivy report as a Github artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: trivy-sbom-report
+            path: '${{ github.workspace }}/dependency-results.sbom.json'

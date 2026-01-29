@@ -31,6 +31,8 @@ jobs:
       - scan_frontend_docker_image
     uses: ./.github/workflows/_build_image.yaml
     secrets: inherit
+    permissions:
+      contents: write
     with:
       application_path: task-manager/frontend
       application_name: frontend
