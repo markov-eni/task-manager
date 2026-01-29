@@ -7,7 +7,9 @@ jobs:
   publish_docs:
     runs-on: ubuntu-latest
     permissions:
-        contents: write
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,7 +22,20 @@ jobs:
       - name: Install MkDocs and dependencies
         run: pip install mkdocs
 
-      - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force -b docs-v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate static files # files are generate under site/ folder
+        run: mkdocs build -d site
+
+      - name: Setup pages
+        uses: actions/configure-pages@v5
+
+        # Upload to github pages
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/
+
+      - name: Deploy it to serve it as static file
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      # Echo the url in order to retrieve the artifact
+      - run: echo ${{ steps.deployment.outputs.page_url }}
