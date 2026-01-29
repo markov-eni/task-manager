@@ -1,0 +1,17 @@
+services:
+
+  backend:
+    image: markoveni/task-manager:backend-2e3a7e32
+    ports:
+      - 127.0.0.1:8000:8000
+    volumes:
+      - ../task-manager/backend/taskmanager.db:/app/taskmanager.db
+  frontend:
+    image: markoveni/task-manager:frontend-2e3a7e32
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+      - API_URL=http://backend:8000
+
+volumes:
+  backend_db:
