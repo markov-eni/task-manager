@@ -35,4 +35,5 @@ jobs:
       contents: write
     with:
       application_path: task-manager/frontend
+      application_name: frontend
       image_registry: ${{ vars.DOCKER_REGISTRY_FRONTEND}}
