@@ -12,6 +12,8 @@ jobs:
 
     build :
       runs-on: ubuntu-latest
+      outputs:
+        docker_image: ${{ steps.docker_image.outputs.docker_image }}
       steps:
         - name: Checkout code
           uses: actions/checkout@v6
@@ -33,3 +35,6 @@ jobs:
 
         - name: Push docker image
           run: docker push ${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA
+
+        - id: docker_image
+          run: echo "docker_image=${{ secrets.DOCKER_REGISTRY}}:${{ inputs.application_name}}-$SHORT_SHA" >> "$GITHUB_OUTPUT"
