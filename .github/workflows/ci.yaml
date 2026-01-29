@@ -7,13 +7,13 @@ on:
 jobs:
 
   filter_path:
-    uses: ./.github/workflows/filter_path.yaml
+    uses: ./.github/workflows/_filter_path.yaml
 
   scan_dependencies:
     if: needs.filter_path.outputs.backend == 'true' || needs.filter_path.outputs.frontend == 'true'
     needs:
       - filter_path
-    uses: ./.github/workflows/scan_dependencies.yaml
+    uses: ./.github/workflows/_scan_dependencies.yaml
 
 
   build_backend:

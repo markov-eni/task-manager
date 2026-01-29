@@ -7,13 +7,13 @@ on:
 jobs:
 
   npm_install:
-    uses: ./.github/workflows/install_npm.yaml
+    uses: ./.github/workflows/_install_npm.yaml
     with:
       application_path: task-manager/frontend
 
   lint_js:
     needs: npm_install
-    uses: ./.github/workflows/lint_javascript.yaml
+    uses: ./.github/workflows/_lint_javascript.yaml
     with:
       cache_key: ${{ needs.install.outputs.cache_key }}
       cache_path: ${{ needs.install.outputs.cache_path }}
@@ -22,14 +22,14 @@ jobs:
   scan_frontend_docker_image:
     needs:
       - lint_js
-    uses: ./.github/workflows/scan_vulnerabilities.yaml
+    uses: ./.github/workflows/_scan_vulnerabilities.yaml
     with:
       application_path: task-manager/frontend
 
   build_frontend:
     needs:
       - scan_frontend_docker_image
-    uses: ./.github/workflows/build_image.yaml
+    uses: ./.github/workflows/_build_image.yaml
     secrets: inherit
     with:
       application_path: task-manager/frontend

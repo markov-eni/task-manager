@@ -7,21 +7,21 @@ on:
 jobs:
 
   lint_python:
-    uses: ./.github/workflows/lint_python.yaml
+    uses: ./.github/workflows/_lint_python.yaml
     with:
       linting_path: task-manager/backend
 
   scan_backend_docker_image:
     needs:
       - lint_python
-    uses: ./.github/workflows/scan_vulnerabilities.yaml
+    uses: ./.github/workflows/_scan_vulnerabilities.yaml
     with:
       application_path: task-manager/backend
 
   build_backend:
     needs:
       - scan_backend_docker_image
-    uses: ./.github/workflows/build_image.yaml
+    uses: ./.github/workflows/_build_image.yaml
     secrets: inherit
     with:
       application_path: task-manager/backend
