@@ -29,6 +29,8 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
+BASE_EXCEPTION = HTTPException(status_code=404, detail="Task not found")
+
 
 @app.get("/debug")
 def debug():
@@ -86,7 +88,7 @@ def search_tasks(q: str = Query(""), db: Session = Depends(get_db)):
 def get_task(task_id: int, db: Session = Depends(get_db)):
     task = db.get(Task, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise BASE_EXCEPTION
     return task
 
 
@@ -94,7 +96,7 @@ def get_task(task_id: int, db: Session = Depends(get_db)):
 def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)):
     task = db.get(Task, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise BASE_EXCEPTION
 
     if payload.title is not None:
         task.title = payload.title.strip()
@@ -114,7 +116,7 @@ def update_task(task_id: int, payload: TaskUpdate, db: Session = Depends(get_db)
 def delete_task(task_id: int, db: Session = Depends(get_db)):
     task = db.get(Task, task_id)
     if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise BASE_EXCEPTION
     db.delete(task)
     db.commit()
     return None
