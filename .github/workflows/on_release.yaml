@@ -1,0 +1,27 @@
+name: Release image tag
+
+on:
+    release:
+        types:
+            - released
+jobs:
+
+  build_backend:
+    uses: ./.github/workflows/_build_image.yaml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      application_path: task-manager/backend
+      image_registry: ${{ vars.DOCKER_REGISTRY_BACKEND }}
+      version_tag: ${{ github.ref_name }}
+
+  build_frontend:
+    uses: ./.github/workflows/_build_image.yaml
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      application_path: task-manager/frontend
+      image_registry: ${{ vars.DOCKER_REGISTRY_FRONTEND}}
+      version_tag: ${{ github.ref_name }}
