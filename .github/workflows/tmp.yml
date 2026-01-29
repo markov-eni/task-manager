@@ -1,0 +1,26 @@
+name: tmp
+
+on:
+    push:
+
+jobs:
+  publish_docs:
+    runs-on: ubuntu-latest
+    permissions:
+        contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "ci/.python-version"
+
+      - name: Install MkDocs and dependencies
+        run: pip install mkdocs
+
+      - name: Deploy to GitHub Pages
+        run: mkdocs gh-deploy --force -b docs-v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
