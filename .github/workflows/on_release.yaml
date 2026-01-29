@@ -25,3 +25,10 @@ jobs:
       application_path: task-manager/frontend
       image_registry: ${{ vars.DOCKER_REGISTRY_FRONTEND}}
       version_tag: ${{ github.ref_name }}
+
+  update_doc:
+    uses: ./.github/workflows/_publish_doc.yaml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
